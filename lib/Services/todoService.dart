@@ -9,7 +9,7 @@ class TodoService extends FirebaseService {
   CollectionReference getCollectionReference() {
     return FirebaseService.db
         .collection("users")
-        .doc(Users().getID())
+        .doc(User().getID())
         .collection("todo");
   }
 

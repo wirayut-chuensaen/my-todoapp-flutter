@@ -1,8 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:todo_app/Pages/LoginPage.dart';
 import 'package:todo_app/Pages/MainPage.dart';
 import 'package:todo_app/Widgets/AppText.dart';
 
@@ -22,8 +21,8 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
 
   void checkLogin() {
     Timer(const Duration(seconds: 1), () {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: ((context) => const MainPage())));
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: ((context) => const LoginPage())));
     });
   }
 

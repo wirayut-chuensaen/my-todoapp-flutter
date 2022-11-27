@@ -4,8 +4,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:todo_app/Pages/LoginPage.dart';
 import 'package:todo_app/Pages/MainPage.dart';
 import 'package:todo_app/Pages/SplashScreenPage.dart';
+import 'package:todo_app/Widgets/AppTheme.dart';
 import 'firebase_options.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,9 +31,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'My Simple Todo App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: themeData,
+      builder: EasyLoading.init(),
       home: const SplashScreenPage(),
       routes: {
         "/splash": (context) => const SplashScreenPage(),
