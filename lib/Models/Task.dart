@@ -1,6 +1,6 @@
 class Task {
-  final bool? status;
-  final String? taskDescription;
+  bool? status;
+  String? taskDescription;
 
   Task({
     required this.status,
@@ -9,7 +9,7 @@ class Task {
 
   factory Task.fromJson(Map<String, dynamic> json) {
     return Task(
-      status: json["status"],
+      status: json["status"] as bool,
       taskDescription: json["task_description"],
     );
   }

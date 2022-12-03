@@ -28,6 +28,7 @@ class AppText extends StatelessWidget {
           color: color,
           fontStyle: fontStyle,
           decoration: textDecoration,
+          fontFamily: "Prompt",
         ));
   }
 }

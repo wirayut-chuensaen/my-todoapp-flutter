@@ -61,6 +61,9 @@ class _AppTextFieldPasswordState extends State<AppTextFieldPassword> {
       height: 50,
       margin: const EdgeInsets.symmetric(vertical: 5),
       child: TextField(
+        style: const TextStyle(
+          fontFamily: "Prompt",
+        ),
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
           hintText: widget.hintText,

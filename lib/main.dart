@@ -1,6 +1,7 @@
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:todo_app/Pages/AddTodoPage.dart';
 import 'package:todo_app/Pages/LoginPage.dart';
 import 'package:todo_app/Pages/MainPage.dart';
 import 'package:todo_app/Pages/SplashScreenPage.dart';
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
         "/splash": (context) => const SplashScreenPage(),
         "/login": (context) => const LoginPage(),
         "/main": (context) => const MainPage(),
+        "/add_todo": (context) => const AddTodoPage(),
       },
     );
   }

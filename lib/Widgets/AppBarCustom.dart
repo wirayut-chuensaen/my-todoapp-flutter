@@ -25,7 +25,8 @@ class _AppBarCustomState extends State<AppBarCustom> {
       centerTitle: true,
       title: Text(
         "${widget.title}",
-        style: const TextStyle(color: Colors.black, fontSize: 18),
+        style: const TextStyle(
+            color: Colors.black, fontSize: 18, fontFamily: "Prompt"),
       ),
     );
   }

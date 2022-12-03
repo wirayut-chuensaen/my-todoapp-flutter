@@ -4,12 +4,11 @@ class FirebaseService {
   static final FirebaseFirestore db = FirebaseFirestore.instance;
 
   CollectionReference getCollectionReference() {
-    throw new Exception(
-        "Collection reference should be implemented by subclass");
+    throw Exception("Collection reference should be implemented by subclass");
   }
 
   String getID() {
-    throw new Exception("ID should be implemented by subclass");
+    throw Exception("ID should be implemented by subclass");
   }
 
   DocumentReference getDocumentReference(id) {
@@ -34,8 +33,7 @@ class FirebaseService {
     await getDocumentReference(documentUUID).update(data);
   }
 
-  deleteByID(String documentUUID) async{
+  deleteByID(String documentUUID) async {
     await getDocumentReference(documentUUID).delete();
   }
-
 }

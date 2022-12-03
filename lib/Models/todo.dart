@@ -1,12 +1,12 @@
 import "package:todo_app/Models/Task.dart";
 
 class Todo {
-  final String? uuid;
+  final String uuid;
   final String todoTitle;
-  List<Task>? taskList;
+  List<Task> taskList;
 
   Todo({
-    required this.uuid,
+    this.uuid = "",
     required this.todoTitle,
     required this.taskList,
   });
@@ -16,9 +16,7 @@ class Todo {
       uuid: json["uuid"],
       todoTitle: json["todo_title"],
       taskList: json["task_list"] != null
-          ? List.of(json["option_value_list"])
-              .map((i) => Task.fromJson(i))
-              .toList()
+          ? List.of(json["task_list"]).map((i) => Task.fromJson(i)).toList()
           : [],
     );
   }
@@ -27,7 +25,7 @@ class Todo {
     return {
       "uuid": uuid,
       "todo_title": todoTitle,
-      "task_list": taskList,
+      "task_list": taskList.map((e) => e.toJson()).toList(),
     };
   }
 

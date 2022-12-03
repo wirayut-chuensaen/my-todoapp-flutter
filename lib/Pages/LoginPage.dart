@@ -6,6 +6,7 @@ import 'package:todo_app/Widgets/AppBarCustom.dart';
 import 'package:todo_app/Widgets/AppButton.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Services/authService.dart';
 import '../Widgets/AppText.dart';
@@ -56,6 +57,8 @@ class _LoginPageState extends State<LoginPage> {
     loginStatus =
         await AuthService.loginWithEmailAndPassword(context, _email, _password);
     if (loginStatus) {
+      var prefs = await SharedPreferences.getInstance();
+      await prefs.setBool("loginStatus", true);
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: ((context) => const MainPage())));
     }

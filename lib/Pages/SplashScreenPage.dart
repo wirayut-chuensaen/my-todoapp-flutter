@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/Pages/LoginPage.dart';
 import 'package:todo_app/Pages/MainPage.dart';
@@ -19,10 +20,18 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
     checkLogin();
   }
 
-  void checkLogin() {
-    Timer(const Duration(seconds: 1), () {
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: ((context) => const LoginPage())));
+  void checkLogin() async {
+    Timer(const Duration(seconds: 1), () async {
+      var prefs = await SharedPreferences.getInstance();
+      bool? loginStatus = prefs.getBool("loginStatus");
+      // print("login status : $loginStatus");
+      if (loginStatus != null && loginStatus == true) {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: ((context) => const MainPage())));
+      } else {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: ((context) => const LoginPage())));
+      }
     });
   }
 

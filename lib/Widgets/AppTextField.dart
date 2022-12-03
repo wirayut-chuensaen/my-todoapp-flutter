@@ -42,6 +42,7 @@ class _AppTextFieldState extends State<AppTextField> {
         autofocus: false,
         style: TextStyle(
           fontSize: widget.fontSize,
+          fontFamily: "Prompt",
         ),
         enabled: widget.editable,
         decoration: InputDecoration(

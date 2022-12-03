@@ -71,6 +71,7 @@ class _RegisterPageState extends State<RegisterPage> {
     isRegistered = await AuthService.registerWithEmailAndPassword(
         context, _email, _password);
     if (isRegistered) {
+      clearData();
       QuickAlert.show(
           context: context,
           type: QuickAlertType.success,
@@ -82,6 +83,15 @@ class _RegisterPageState extends State<RegisterPage> {
           });
     }
     EasyLoading.dismiss();
+  }
+
+  void clearData() {
+    _email = "";
+    _password = "";
+    _passwordConfirm = "";
+    email.text = "";
+    password.text = "";
+    passwordConfirm.text = "";
   }
 
   @override
