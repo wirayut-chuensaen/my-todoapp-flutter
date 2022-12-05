@@ -6,7 +6,7 @@ import '../Models/Task.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
 import '../Models/Todo.dart';
-import '../Services/todoService.dart';
+import '../Services/TodoService.dart';
 import '../Widgets/AppTextField.dart';
 
 class AddTodoPage extends StatefulWidget {
@@ -20,9 +20,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
   final TextEditingController title = TextEditingController();
   String _title = "";
 
-  final List<Task> _taskList = [
-    Task.fromJson({"status": false})
-  ];
+  final List<Task> _taskList = [];
 
   @override
   void initState() {

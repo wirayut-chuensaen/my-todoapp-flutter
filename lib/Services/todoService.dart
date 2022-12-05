@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:todo_app/Models/User.dart';
-import 'package:todo_app/Services/firebaseService.dart';
+import 'package:todo_app/Services/FirebaseService.dart';
 
 class TodoService extends FirebaseService {
   TodoService();

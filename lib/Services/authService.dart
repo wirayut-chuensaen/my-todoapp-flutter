@@ -7,14 +7,13 @@ class AuthService {
   static final auth = FirebaseAuth.instance;
   static User user = auth.currentUser!;
 
-  // Sign-in process
+  // Login process
   static Future<bool> loginWithEmailAndPassword(
       BuildContext context, String email, String password) async {
     try {
       await auth.signInWithEmailAndPassword(email: email, password: password);
       return true;
     } on FirebaseAuthException catch (error) {
-      // print("loginWithEmailAndPassword error : $error");
       if (error.code == 'invalid-email' || error.code == 'wrong-password') {
         QuickAlert.show(
           context: context,
@@ -44,13 +43,13 @@ class AuthService {
 
   // Sign-up process
   static Future<bool> registerWithEmailAndPassword(
-      BuildContext context, String email, String password) async {
+      BuildContext context, String name, String email, String password) async {
     try {
       await auth.createUserWithEmailAndPassword(
           email: email, password: password);
+      await auth.currentUser!.updateDisplayName(name);
       return true;
     } on FirebaseAuthException catch (error) {
-      // print("registerWithEmailAndPassword error : $error");
       if (error.code == 'weak-password') {
         QuickAlert.show(
           context: context,
@@ -85,6 +84,41 @@ class AuthService {
     }
   }
 
+  // Send reset password email to user's email process
+  static Future<bool> resetPassword(BuildContext context, String email) async {
+    try {
+      await auth.sendPasswordResetEmail(email: email);
+      return true;
+    } on FirebaseAuthException {
+      QuickAlert.show(
+        context: context,
+        type: QuickAlertType.error,
+        title: 'Oops...',
+        text: "Something went wrong.",
+      );
+      return false;
+    } catch (error) {
+      QuickAlert.show(
+        context: context,
+        type: QuickAlertType.error,
+        title: 'Oops...',
+        text: "Something went wrong.",
+      );
+      return false;
+    }
+  }
+
+  // Get user display name
+  static String getUserDisplayName() {
+    return user.displayName.toString();
+  }
+
+  // Get user email
+  static String getUserEmail() {
+    return user.email.toString();
+  }
+
+  // Logout process
   static Future<void> logout() async {
     return auth.signOut();
   }

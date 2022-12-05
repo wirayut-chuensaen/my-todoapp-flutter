@@ -8,7 +8,7 @@ import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../Services/authService.dart';
+import '../Services/AuthService.dart';
 import '../Widgets/AppText.dart';
 import '../Widgets/AppTextField.dart';
 import '../Widgets/AppTextFieldPassword.dart';
@@ -58,9 +58,10 @@ class _LoginPageState extends State<LoginPage> {
         await AuthService.loginWithEmailAndPassword(context, _email, _password);
     if (loginStatus) {
       var prefs = await SharedPreferences.getInstance();
-      await prefs.setBool("loginStatus", true);
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: ((context) => const MainPage())));
+      await prefs.setBool("loginStatus", true).then((value) {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: ((context) => const MainPage())));
+      });
     }
     EasyLoading.dismiss();
   }
@@ -113,7 +114,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             const SizedBox(height: 5),
             AppButton(
-              text: 'Signup',
+              text: 'Sign up',
               borderRadius: 50.0,
               onSubmit: () => Navigator.push(
                   context,

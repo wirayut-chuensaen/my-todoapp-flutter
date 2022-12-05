@@ -7,8 +7,5 @@ final ThemeData themeData = ThemeData(
         bodyText1: const TextStyle(
             color: Color.fromRGBO(51, 51, 51, 1), fontFamily: "Prompt"),
       ),
-  // appBarTheme: AppBarTheme(color: Color.fromRGBO(215, 105, 212, 1)),
   hintColor: Colors.black26,
-  // colorScheme: ColorScheme.fromSwatch()
-  //     .copyWith(secondary: const Color.fromRGBO(0, 158, 32, 1)),
 );

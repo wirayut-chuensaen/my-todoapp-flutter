@@ -30,17 +30,26 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'My Simple Todo App',
-      theme: themeData,
-      builder: EasyLoading.init(),
-      home: const SplashScreenPage(),
-      routes: {
-        "/splash": (context) => const SplashScreenPage(),
-        "/login": (context) => const LoginPage(),
-        "/main": (context) => const MainPage(),
-        "/add_todo": (context) => const AddTodoPage(),
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+        if (!currentFocus.hasPrimaryFocus) {
+          // currentFocus.unfocus();
+          FocusManager.instance.primaryFocus?.unfocus();
+        }
       },
+      child: MaterialApp(
+        title: 'My Simple Todo App',
+        theme: themeData,
+        builder: EasyLoading.init(),
+        home: const SplashScreenPage(),
+        routes: {
+          "/splash": (context) => const SplashScreenPage(),
+          "/login": (context) => const LoginPage(),
+          "/main": (context) => const MainPage(),
+          "/add_todo": (context) => const AddTodoPage(),
+        },
+      ),
     );
   }
 }

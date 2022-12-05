@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:todo_app/Pages/MainPage.dart';
-import 'package:todo_app/Pages/RegisterPage.dart';
 import 'package:todo_app/Widgets/AppBarCustom.dart';
 import 'package:todo_app/Widgets/AppButton.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
 
-import '../Services/authService.dart';
+import '../Services/AuthService.dart';
 import '../Widgets/AppText.dart';
 import '../Widgets/AppTextField.dart';
 import '../Widgets/AppTextFieldPassword.dart';
@@ -20,15 +18,15 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final name = TextEditingController();
   final email = TextEditingController();
   final password = TextEditingController();
   final passwordConfirm = TextEditingController();
+  String _name = "";
   String _email = "";
   String _password = "";
   String _passwordConfirm = "";
   bool isRegistered = false;
-  bool loginStatus = false;
-  bool canPop = true;
 
   @override
   void initState() {
@@ -36,7 +34,13 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void onValidateForm() {
-    if (_email.isEmpty) {
+    if (_name.isEmpty) {
+      QuickAlert.show(
+        context: context,
+        type: QuickAlertType.warning,
+        text: "Please enter your name.",
+      );
+    } else if (_email.isEmpty) {
       QuickAlert.show(
         context: context,
         type: QuickAlertType.warning,
@@ -69,7 +73,7 @@ class _RegisterPageState extends State<RegisterPage> {
     EasyLoading.instance.maskType = EasyLoadingMaskType.black;
     EasyLoading.show(status: 'Loading...');
     isRegistered = await AuthService.registerWithEmailAndPassword(
-        context, _email, _password);
+        context, _name, _email, _password);
     if (isRegistered) {
       clearData();
       QuickAlert.show(
@@ -107,6 +111,16 @@ class _RegisterPageState extends State<RegisterPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 10),
+            const AppText(text: "Name"),
+            AppTextField(
+              text: name,
+              onChanged: (value) {
+                setState(() {
+                  _name = value;
+                });
+              },
+            ),
+            const SizedBox(height: 10),
             const AppText(text: "Email"),
             AppTextField(
               text: email,
@@ -138,7 +152,7 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
             const SizedBox(height: 10),
             AppButton(
-              text: 'Signup',
+              text: 'Sign up',
               borderRadius: 50.0,
               onSubmit: () => onValidateForm(),
             ),
