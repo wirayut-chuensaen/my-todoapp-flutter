@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:todo_app/Pages/AddTodoPage.dart';
+import 'package:todo_app/Pages/AddEditTodoPage.dart';
 import 'package:todo_app/Pages/LoginPage.dart';
 import 'package:todo_app/Services/TodoService.dart';
 import 'package:todo_app/Widgets/AppText.dart';
@@ -19,7 +19,6 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  int selectedExpansionTile = -1;
   final emailTextField = TextEditingController();
   String _email = "";
 
@@ -231,7 +230,7 @@ class _MainPageState extends State<MainPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const AddTodoPage(),
+              builder: (context) => const AddEditTodoPage(),
             ),
           );
         },
@@ -239,13 +238,20 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
+  // for reload page state
+  void reloadState() {
+    setState(() {});
+  }
+
   Widget buildListBody(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: TodoService().getTodoListOfCurrentUser(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) {
-          return const Center(
-            child: AppText(text: "Something went wrong"),
+          QuickAlert.show(
+            context: context,
+            type: QuickAlertType.warning,
+            text: "Something went wrong\nCannot get todo list.",
           );
         } else if (snapshot.connectionState == ConnectionState.waiting) {
           // ex. loading widget
@@ -258,53 +264,11 @@ class _MainPageState extends State<MainPage> {
             padding: const EdgeInsets.only(top: 8.0),
             child: ListView.builder(
               itemCount: snapshot.data!.docs.length,
-              itemBuilder: (context, index) {
-                Todo todo = Todo.fromJson(
-                    snapshot.data!.docs[index].data() as Map<String, dynamic>);
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: Card(
-                    child: ExpansionTile(
-                      initiallyExpanded: index == selectedExpansionTile,
-                      onExpansionChanged: ((newState) {
-                        if (newState) {
-                          setState(() {
-                            selectedExpansionTile = index;
-                          });
-                        } else {
-                          setState(() {
-                            selectedExpansionTile = -1;
-                          });
-                        }
-                      }),
-                      leading: const Icon(Icons.fiber_manual_record),
-                      title: AppText(text: todo.todoTitle),
-                      trailing: const Icon(Icons.keyboard_arrow_down),
-                      children: todo.taskList
-                          .asMap()
-                          .entries
-                          .map(
-                            (task) => CheckboxListTile(
-                              contentPadding: const EdgeInsets.only(left: 30),
-                              value: task.value.status,
-                              title: AppText(
-                                  text: task.value.taskDescription.toString()),
-                              onChanged: (value) {
-                                setState(
-                                  () {
-                                    task.value.status = value;
-                                    TodoService().updateByID(
-                                        todo.toJson(), todo.uuid.toString());
-                                  },
-                                );
-                              },
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  ),
-                );
-              },
+              itemBuilder: (context, index) => TodoItem(
+                snapshot: snapshot,
+                index: index,
+                onReloadState: reloadState,
+              ),
             ),
           );
         }
@@ -348,6 +312,101 @@ class _MainPageState extends State<MainPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class TodoItem extends StatefulWidget {
+  final AsyncSnapshot<QuerySnapshot> snapshot;
+  final int index;
+  final Function onReloadState;
+
+  const TodoItem({
+    super.key,
+    required this.snapshot,
+    required this.index,
+    required this.onReloadState,
+  });
+
+  @override
+  State<TodoItem> createState() => _TodoItemState();
+}
+
+class _TodoItemState extends State<TodoItem> {
+  Todo? todo;
+  bool expandState = false;
+
+  @override
+  void initState() {
+    super.initState();
+    todo = Todo.fromJson(widget.snapshot.data!.docs[widget.index].data()
+        as Map<String, dynamic>);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      child: Card(
+        child: ExpansionTile(
+          initiallyExpanded: true,
+          trailing: SizedBox(
+            width: 70,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AddEditTodoPage(
+                                  todo: todo,
+                                ))).then((value) => widget.onReloadState());
+                  },
+                  child: AppText(
+                    text: "Edit",
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.bold,
+                    textDecoration: TextDecoration.underline,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Icon(
+                  expandState == true
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
+                  color: Theme.of(context).primaryColor,
+                ),
+              ],
+            ),
+          ),
+          onExpansionChanged: (bool expanded) {
+            setState(() => expandState = expanded);
+          },
+          title: AppText(text: todo!.todoTitle),
+          children: todo!.taskList
+              .asMap()
+              .entries
+              .map(
+                (task) => CheckboxListTile(
+                  contentPadding: const EdgeInsets.only(left: 30, right: 14),
+                  value: task.value.status,
+                  title: AppText(text: task.value.taskDescription.toString()),
+                  onChanged: (value) {
+                    setState(
+                      () {
+                        task.value.status = value;
+                        TodoService()
+                            .updateByID(todo!.toJson(), todo!.uuid.toString());
+                      },
+                    );
+                  },
+                ),
+              )
+              .toList(),
+        ),
       ),
     );
   }

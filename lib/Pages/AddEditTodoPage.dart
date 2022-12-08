@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/Widgets/AppBarCustom.dart';
+import 'package:todo_app/Widgets/AppSnackBar.dart';
 import 'package:todo_app/Widgets/AppText.dart';
 
 import '../Models/Task.dart';
@@ -9,30 +10,52 @@ import '../Models/Todo.dart';
 import '../Services/TodoService.dart';
 import '../Widgets/AppTextField.dart';
 
-class AddTodoPage extends StatefulWidget {
-  const AddTodoPage({super.key});
+class AddEditTodoPage extends StatefulWidget {
+  final Todo? todo;
+
+  const AddEditTodoPage({super.key, this.todo});
 
   @override
-  State<AddTodoPage> createState() => _AddTodoPageState();
+  State<AddEditTodoPage> createState() => _AddEditTodoPageState();
 }
 
-class _AddTodoPageState extends State<AddTodoPage> {
+class _AddEditTodoPageState extends State<AddEditTodoPage> {
   final TextEditingController title = TextEditingController();
   String _title = "";
+  bool isUpdateTodo = false;
 
   final List<Task> _taskList = [];
 
   @override
   void initState() {
     super.initState();
+    initialTodo();
+  }
+
+  void initialTodo() {
+    if (widget.todo != null) {
+      setState(() {
+        isUpdateTodo = true;
+        title.text = widget.todo!.todoTitle;
+        _title = widget.todo!.todoTitle;
+        _taskList.addAll(widget.todo!.taskList);
+      });
+    }
   }
 
   void onSubmit() {
     bool validateStatus = onValidateForm();
     if (validateStatus == true) {
       Todo todo = Todo(todoTitle: _title, taskList: _taskList);
-      TodoService().add(todo.toJson());
-      Navigator.pop(context);
+      if (isUpdateTodo == false) {
+        TodoService().add(todo.toJson());
+        snackbar("Todo added.", context);
+        Navigator.pop(context);
+      } else {
+        TodoService().updateByID(todo.toJson(), widget.todo!.uuid);
+        snackbar("Todo updated..", context);
+        Navigator.pop(context);
+      }
     }
   }
 
@@ -59,49 +82,74 @@ class _AddTodoPageState extends State<AddTodoPage> {
     return true;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const AppBarCustom(
-        showBack: true,
-        title: "Add Todo",
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: Colors.blue,
-        label: const AppText(
-          text: "Add Task",
-          color: Colors.white,
-        ),
-        icon: const Icon(Icons.add),
-        onPressed: () {
-          setState(
-            () {
-              _taskList.add(Task.fromJson({"status": false}));
-            },
-          );
-        },
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const AppText(text: "Title"),
-            AppTextField(
-              text: title,
-              onChanged: (value) {
-                setState(() {
-                  _title = value;
-                });
-              },
+  void onDeleteTodo() {
+    QuickAlert.show(
+        context: context,
+        type: QuickAlertType.confirm,
+        title: "Confirm delete this todo?",
+        confirmBtnText: 'Yes',
+        confirmBtnColor: Colors.red,
+        cancelBtnText: 'No',
+        onConfirmBtnTap: () {
+          TodoService().deleteByID(widget.todo!.uuid);
+          snackbar("Deleted", context);
+          Navigator.pop(context);
+          Navigator.pop(context);
+        });
+  }
+
+  Widget buildBottomButton() {
+    if (isUpdateTodo) {
+      return Container(
+        width: double.infinity,
+        height: 60,
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 4,
+              offset: const Offset(0, 1),
             ),
-            const SizedBox(height: 15),
-            buildTaskList(),
-            const SizedBox(height: 10),
           ],
         ),
-      ),
-      bottomNavigationBar: Container(
+        child: Row(
+          children: [
+            Material(
+              color: Colors.red,
+              child: InkWell(
+                onTap: () => onDeleteTodo(),
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.4,
+                  alignment: Alignment.center,
+                  child: const AppText(
+                    text: "Delete todo",
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+            Material(
+              color: Theme.of(context).primaryColor,
+              child: InkWell(
+                onTap: () => onSubmit(),
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.6,
+                  alignment: Alignment.center,
+                  child: const AppText(
+                    text: "Update todo",
+                    color: Colors.white,
+                    size: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Container(
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
@@ -130,7 +178,54 @@ class _AddTodoPageState extends State<AddTodoPage> {
             ),
           ),
         ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBarCustom(
+        showBack: true,
+        title: isUpdateTodo == false ? "Add Todo" : "Update Todo",
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: Colors.blue,
+        label: const AppText(
+          text: "Add Task",
+          color: Colors.white,
+        ),
+        icon: const Icon(Icons.add),
+        onPressed: () {
+          setState(
+            () {
+              _taskList.add(Task.fromJson({"status": false}));
+            },
+          );
+        },
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const AppText(text: "Title"),
+            AppTextField(
+              text: title,
+              onChanged: (value) {
+                setState(() {
+                  _title = value;
+                });
+              },
+            ),
+            const SizedBox(height: 15),
+            buildTaskList(),
+            const SizedBox(height: 10),
+          ],
+        ),
+      ),
+      bottomNavigationBar: buildBottomButton(),
     );
   }
 
