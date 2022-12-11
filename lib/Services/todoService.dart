@@ -7,7 +7,6 @@ class TodoService extends FirebaseService {
 
   @override
   CollectionReference getCollectionReference() {
-    // print(User().getID());
     return FirebaseService.db
         .collection("users")
         .doc(User().getID())

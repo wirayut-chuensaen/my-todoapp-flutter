@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:intl/intl.dart';
 import 'package:todo_app/Widgets/AppBarCustom.dart';
+import 'package:todo_app/Widgets/AppDialog.dart';
 import 'package:todo_app/Widgets/AppSnackBar.dart';
 import 'package:todo_app/Widgets/AppText.dart';
-
 import '../Models/Task.dart';
-import 'package:quickalert/models/quickalert_type.dart';
-import 'package:quickalert/widgets/quickalert_dialog.dart';
 import '../Models/Todo.dart';
 import '../Services/TodoService.dart';
 import '../Widgets/AppTextField.dart';
@@ -22,6 +22,8 @@ class AddEditTodoPage extends StatefulWidget {
 class _AddEditTodoPageState extends State<AddEditTodoPage> {
   final TextEditingController title = TextEditingController();
   String _title = "";
+  String _startDate = "";
+  String _endDate = "";
   bool isUpdateTodo = false;
 
   final List<Task> _taskList = [];
@@ -29,6 +31,10 @@ class _AddEditTodoPageState extends State<AddEditTodoPage> {
   @override
   void initState() {
     super.initState();
+    EasyLoading.instance
+      ..maskType = EasyLoadingMaskType.black
+      ..indicatorType = EasyLoadingIndicatorType.ring
+      ..loadingStyle = EasyLoadingStyle.light;
     initialTodo();
   }
 
@@ -36,8 +42,10 @@ class _AddEditTodoPageState extends State<AddEditTodoPage> {
     if (widget.todo != null) {
       setState(() {
         isUpdateTodo = true;
-        title.text = widget.todo!.todoTitle;
-        _title = widget.todo!.todoTitle;
+        title.text = widget.todo!.todoTitle.toString();
+        _title = widget.todo!.todoTitle.toString();
+        _startDate = widget.todo!.startDate.toString();
+        _endDate = widget.todo!.endDate.toString();
         _taskList.addAll(widget.todo!.taskList);
       });
     }
@@ -46,7 +54,13 @@ class _AddEditTodoPageState extends State<AddEditTodoPage> {
   void onSubmit() {
     bool validateStatus = onValidateForm();
     if (validateStatus == true) {
-      Todo todo = Todo(todoTitle: _title, taskList: _taskList);
+      EasyLoading.show(status: "Loading...");
+      Todo todo = Todo(
+        todoTitle: _title,
+        startDate: _startDate,
+        endDate: _endDate,
+        taskList: _taskList,
+      );
       if (isUpdateTodo == false) {
         TodoService().add(todo.toJson());
         snackbar("Todo added.", context);
@@ -56,26 +70,47 @@ class _AddEditTodoPageState extends State<AddEditTodoPage> {
         snackbar("Todo updated..", context);
         Navigator.pop(context);
       }
+      EasyLoading.dismiss();
     }
   }
 
   bool onValidateForm() {
     var list = _taskList
         .where((element) =>
-            element.taskDescription != "" && element.taskDescription != null)
+            element.taskDescription == "" || element.taskDescription == null)
         .toList();
     if (_title.isEmpty) {
-      QuickAlert.show(
+      showDialog(
         context: context,
-        type: QuickAlertType.warning,
-        text: "Please enter your title.",
+        builder: (context) => AppDialog(
+          dialogType: DialogType.alert,
+          dialogLogo: DialogLogo.warning,
+          dialogTitle: "Warning",
+          dialogDescription: "Please enter todo title.",
+        ),
       );
       return false;
-    } else if (list.isEmpty) {
-      QuickAlert.show(
+    } else if (_startDate.isEmpty || _endDate.isEmpty) {
+      showDialog(
         context: context,
-        type: QuickAlertType.warning,
-        text: "Task list is empty or task dedscription in list is empty.",
+        builder: (context) => AppDialog(
+          dialogType: DialogType.alert,
+          dialogLogo: DialogLogo.warning,
+          dialogTitle: "Warning",
+          dialogDescription: "Please enter todo start date and end date.",
+        ),
+      );
+      return false;
+    } else if (list.isNotEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AppDialog(
+          dialogType: DialogType.alert,
+          dialogLogo: DialogLogo.warning,
+          dialogTitle: "Warning",
+          dialogDescription:
+              "Task list is empty or task dedscription in list is empty.",
+        ),
       );
       return false;
     }
@@ -83,19 +118,23 @@ class _AddEditTodoPageState extends State<AddEditTodoPage> {
   }
 
   void onDeleteTodo() {
-    QuickAlert.show(
-        context: context,
-        type: QuickAlertType.confirm,
-        title: "Confirm delete this todo?",
-        confirmBtnText: 'Yes',
-        confirmBtnColor: Colors.red,
-        cancelBtnText: 'No',
-        onConfirmBtnTap: () {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AppDialog(
+        dialogType: DialogType.comfirm,
+        dialogLogo: DialogLogo.cross,
+        dialogTitle: "Confirm delete this todo?",
+        onPopScope: false,
+        confirmDeleteBtn: true,
+        onConfirmBtnPress: () {
           TodoService().deleteByID(widget.todo!.uuid);
           snackbar("Deleted", context);
           Navigator.pop(context);
           Navigator.pop(context);
-        });
+        },
+      ),
+    );
   }
 
   Widget buildBottomButton() {
@@ -210,7 +249,10 @@ class _AddEditTodoPageState extends State<AddEditTodoPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const AppText(text: "Title"),
+            const AppText(
+              text: "Title",
+              size: 16,
+            ),
             AppTextField(
               text: title,
               onChanged: (value) {
@@ -219,9 +261,35 @@ class _AddEditTodoPageState extends State<AddEditTodoPage> {
                 });
               },
             ),
-            const SizedBox(height: 15),
-            buildTaskList(),
             const SizedBox(height: 10),
+            const AppText(
+              text: "Start date",
+              size: 16,
+            ),
+            DatePicker(
+              onSelectDate: (date) {
+                setState(() {
+                  _startDate = date;
+                });
+              },
+              date: _startDate,
+            ),
+            const SizedBox(height: 10),
+            const AppText(
+              text: "End date",
+              size: 16,
+            ),
+            DatePicker(
+              onSelectDate: (date) {
+                setState(() {
+                  _endDate = date;
+                });
+              },
+              date: _endDate,
+            ),
+            const SizedBox(height: 40),
+            buildTaskList(),
+            const SizedBox(height: 80),
           ],
         ),
       ),
@@ -231,11 +299,21 @@ class _AddEditTodoPageState extends State<AddEditTodoPage> {
 
   Widget buildTaskList() {
     if (_taskList.isNotEmpty) {
-      return ListView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: _taskList.length,
-        itemBuilder: (ctx, index) => buildTaskItem(_taskList[index], index),
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const AppText(
+            text: "Task list :",
+            size: 16,
+          ),
+          const SizedBox(height: 10),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: _taskList.length,
+            itemBuilder: (ctx, index) => buildTaskItem(_taskList[index], index),
+          ),
+        ],
       );
     }
     return const Center(
@@ -300,6 +378,86 @@ class _AddEditTodoPageState extends State<AddEditTodoPage> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class DatePicker extends StatefulWidget {
+  final Function(String date)? onSelectDate;
+  final String? date;
+
+  const DatePicker({super.key, this.onSelectDate, this.date});
+
+  @override
+  State<DatePicker> createState() => _DatePickerState();
+}
+
+class _DatePickerState extends State<DatePicker> {
+  String dateShow = "";
+  DateTime? dateTime;
+
+  @override
+  void initState() {
+    super.initState();
+    initDate();
+  }
+
+  void initDate() {
+    if (widget.date != null && widget.date != "") {
+      DateTime tempDate =
+          DateFormat("yyyy-MM-dd hh:mm:ss").parse(widget.date.toString());
+      setState(() {
+        dateShow = "${tempDate.year}-${tempDate.month}-${tempDate.day}";
+        dateTime = tempDate;
+      });
+    }
+  }
+
+  void selectDate() async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: dateTime ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(9999),
+    );
+    if (picked != null) {
+      setState(() {
+        dateShow = "${picked.year}-${picked.month}-${picked.day}";
+      });
+      if (widget.onSelectDate != null) {
+        String tempDateString =
+            DateFormat("yyyy-MM-dd hh:mm:ss").format(picked);
+        widget.onSelectDate!(tempDateString);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => selectDate(),
+      child: Container(
+        alignment: Alignment.center,
+        width: MediaQuery.of(context).size.width,
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: const BorderRadius.all(Radius.circular(5)),
+          border: Border.all(
+              color: const Color.fromRGBO(232, 232, 232, 1), width: 0.8),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            AppText(text: dateShow),
+            const Icon(
+              Icons.calendar_month,
+              color: Colors.grey,
+              size: 18,
+            )
+          ],
+        ),
+      ),
     );
   }
 }

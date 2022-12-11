@@ -1,15 +1,18 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/Pages/AddEditTodoPage.dart';
 import 'package:todo_app/Pages/LoginPage.dart';
 import 'package:todo_app/Services/TodoService.dart';
+import 'package:todo_app/Widgets/AppSnackBar.dart';
 import 'package:todo_app/Widgets/AppText.dart';
-import 'package:todo_app/Widgets/AppTextField.dart';
 import '../Services/AuthService.dart';
 import '../Models/Todo.dart';
-import 'package:quickalert/models/quickalert_type.dart';
-import 'package:quickalert/widgets/quickalert_dialog.dart';
+import '../Widgets/AppDialog.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -19,191 +22,122 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  final emailTextField = TextEditingController();
   String _email = "";
+  String _versionNumber = "";
+
+  @override
+  void initState() {
+    super.initState();
+    EasyLoading.instance
+      ..maskType = EasyLoadingMaskType.black
+      ..indicatorType = EasyLoadingIndicatorType.ring
+      ..loadingStyle = EasyLoadingStyle.light;
+    initVersionNumber();
+  }
+
+  void initVersionNumber() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    String version = packageInfo.version;
+    String buildNumber = packageInfo.buildNumber;
+    setState(() {
+      _versionNumber = 'Version $version ($buildNumber)';
+    });
+  }
 
   void onResetPassword() {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: ((context) {
-        return AlertDialog(
-          title: const AppText(text: "Enter your email"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AppTextField(
-                text: emailTextField,
-                onChanged: (value) {
-                  setState(() {
-                    _email = value;
-                  });
-                },
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Material(
-                    color: Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(50),
-                    shadowColor: Colors.grey.withOpacity(0.5),
-                    elevation: 2.0,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(50),
-                      onTap: () => Navigator.pop(context),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 30, vertical: 4),
-                        alignment: Alignment.center,
-                        child: const AppText(text: "Cancel"),
-                      ),
-                    ),
-                  ),
-                  Material(
-                    color: Theme.of(context).primaryColor,
-                    borderRadius: BorderRadius.circular(50),
-                    shadowColor: Colors.grey.withOpacity(0.5),
-                    elevation: 2.0,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(50),
-                      onTap: () {
-                        Navigator.pop(context);
-                        onResetPasswordProcess();
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 30, vertical: 4),
-                        alignment: Alignment.center,
-                        child: const AppText(
-                          text: "Confirm",
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              )
-            ],
-          ),
-        );
-      }),
+      builder: (context) => AppDialog(
+        onPopScope: false,
+        dialogType: DialogType.input,
+        dialogLogo: DialogLogo.contact,
+        dialogTitle: "Enter your email",
+        dialogDescription:
+            "We will send you an email to reset your password by email.",
+        inputPlaceHolder: "Email",
+        inputValue: _email,
+        onInputChange: (value) {
+          _email = value;
+        },
+        onConfirmBtnPress: () => onResetPasswordProcess(),
+      ),
     );
   }
 
   void onResetPasswordProcess() {
     if (_email == AuthService.getUserEmail()) {
+      Navigator.pop(context); // pop previous dialog
       showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: ((context) {
-            return AlertDialog(
-              title: const AppText(text: "Confirm send reset password email?"),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Material(
-                        color: Colors.grey.shade300,
-                        borderRadius: BorderRadius.circular(50),
-                        shadowColor: Colors.grey.withOpacity(0.5),
-                        elevation: 2.0,
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(50),
-                          onTap: () => Navigator.pop(context),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 30, vertical: 4),
-                            alignment: Alignment.center,
-                            child: const AppText(text: "Cancel"),
-                          ),
-                        ),
-                      ),
-                      Material(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(50),
-                        shadowColor: Colors.grey.withOpacity(0.5),
-                        elevation: 2.0,
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(50),
-                          onTap: () async {
-                            bool isReseted = await AuthService.resetPassword(
-                                context, _email);
-                            if (isReseted) {
-                              showDialog(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    content: const AppText(
-                                        text:
-                                            "Send reset password email success.\nPlease check your email(email box or junk box)."),
-                                    actions: [
-                                      Material(
-                                        color: Theme.of(context).primaryColor,
-                                        borderRadius: BorderRadius.circular(50),
-                                        shadowColor:
-                                            Colors.grey.withOpacity(0.5),
-                                        elevation: 2.0,
-                                        child: InkWell(
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                            onLogout();
-                                          },
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 30, vertical: 4),
-                                            alignment: Alignment.center,
-                                            child: const AppText(
-                                              text: "Confirm",
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            }
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 30, vertical: 4),
-                            alignment: Alignment.center,
-                            child: const AppText(
-                              text: "Confirm",
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  )
-                ],
-              ),
-            );
-          }));
-    } else {
-      QuickAlert.show(
         context: context,
-        type: QuickAlertType.warning,
-        text: "Input email and account email do not match.",
+        barrierDismissible: false,
+        builder: (context) => AppDialog(
+          dialogType: DialogType.comfirm,
+          dialogLogo: DialogLogo.warning,
+          onPopScope: false,
+          dialogTitle: "Confirm send reset password email?",
+          onConfirmBtnPress: () async {
+            EasyLoading.show(status: "Loading...");
+            bool isReseted = await AuthService.resetPassword(context, _email);
+            if (isReseted) {
+              EasyLoading.dismiss();
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => AppDialog(
+                  dialogType: DialogType.alert,
+                  dialogLogo: DialogLogo.check,
+                  onPopScope: false,
+                  dialogDescription:
+                      "Password reset email sent successfully. If you can't find it, it might be in your junk mail.",
+                  onConfirmBtnPress: () {
+                    Navigator.pop(context);
+                    onLogout();
+                  },
+                ),
+              );
+            } else {
+              EasyLoading.dismiss();
+              Navigator.pop(context);
+              snackbar("Something went wrong.", context);
+            }
+          },
+        ),
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) => AppDialog(
+          dialogType: DialogType.alert,
+          dialogLogo: DialogLogo.cross,
+          dialogTitle: "Email invalid",
+          dialogDescription: "Input email and account email do not match.",
+          onConfirmBtnPress: () => Navigator.pop(context),
+        ),
       );
     }
   }
 
   void onLogout() async {
-    var prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-    await AuthService.logout().then((value) {
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: ((context) => const LoginPage())));
-    });
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AppDialog(
+        dialogType: DialogType.comfirm,
+        dialogLogo: DialogLogo.warning,
+        onPopScope: false,
+        dialogTitle: "Confirm logout?",
+        onConfirmBtnPress: () async {
+          var prefs = await SharedPreferences.getInstance();
+          await prefs.clear();
+          await AuthService.logout().then((value) {
+            Navigator.pop(context);
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: ((context) => const LoginPage())));
+          });
+        },
+      ),
+    );
   }
 
   @override
@@ -218,7 +152,7 @@ class _MainPageState extends State<MainPage> {
         backgroundColor: Theme.of(context).primaryColor,
       ),
       drawer: buildDrawer(),
-      body: buildListBody(context),
+      body: buildListBody(),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: Colors.blue,
         label: const AppText(
@@ -238,20 +172,19 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  // for reload page state
-  void reloadState() {
-    setState(() {});
-  }
-
-  Widget buildListBody(BuildContext context) {
+  Widget buildListBody() {
     return StreamBuilder<QuerySnapshot>(
       stream: TodoService().getTodoListOfCurrentUser(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) {
-          QuickAlert.show(
+          showDialog(
             context: context,
-            type: QuickAlertType.warning,
-            text: "Something went wrong\nCannot get todo list.",
+            builder: (context) => AppDialog(
+              dialogType: DialogType.alert,
+              dialogLogo: DialogLogo.warning,
+              dialogTitle: "oops!",
+              dialogDescription: "Something went wrong\nCannot get todo list.",
+            ),
           );
         } else if (snapshot.connectionState == ConnectionState.waiting) {
           // ex. loading widget
@@ -260,15 +193,12 @@ class _MainPageState extends State<MainPage> {
             child: AppText(text: "There are no TODOs, add them!"),
           );
         } else if (snapshot.hasData && snapshot.data!.size > 0) {
-          return Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: ListView.builder(
-              itemCount: snapshot.data!.docs.length,
-              itemBuilder: (context, index) => TodoItem(
-                snapshot: snapshot,
-                index: index,
-                onReloadState: reloadState,
-              ),
+          return ListView.builder(
+            itemCount: snapshot.data!.docs.length,
+            padding: const EdgeInsets.only(top: 10, bottom: 80),
+            itemBuilder: (context, index) => TodoItem(
+              snapshot: snapshot,
+              index: index,
             ),
           );
         }
@@ -284,12 +214,30 @@ class _MainPageState extends State<MainPage> {
         children: [
           SizedBox(
             child: Column(
-              children: const [
-                SizedBox(
-                  height: kToolbarHeight + 50,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(
+                  height: kToolbarHeight + 20,
                 ),
-                Center(
-                  child: AppText(text: "My Simple Todo App"),
+                Icon(
+                  Icons.menu_book_outlined,
+                  size: MediaQuery.of(context).size.width * 0.4,
+                  color: Theme.of(context).primaryColor,
+                ),
+                const SizedBox(height: 20),
+                AppText(
+                  text: "My Simple Todo App",
+                  color: Theme.of(context).primaryColor,
+                  size: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+                AppText(
+                  text: "by Wirayut Chuensaen",
+                  color: Theme.of(context).primaryColor,
+                ),
+                AppText(
+                  text: "@github/wirayut-chuensaen",
+                  color: Theme.of(context).primaryColor,
                 ),
               ],
             ),
@@ -300,11 +248,52 @@ class _MainPageState extends State<MainPage> {
               children: [
                 ListTile(
                   leading: const Icon(Icons.key_outlined),
+                  iconColor: Theme.of(context).primaryColor,
                   title: const AppText(text: "Reset password"),
                   onTap: () => onResetPassword(),
                 ),
                 ListTile(
+                  leading: const Icon(Icons.help),
+                  iconColor: Theme.of(context).primaryColor,
+                  title: const AppText(text: "About"),
+                  onTap: () {
+                    showAboutDialog(
+                      context: context,
+                      applicationName: "About",
+                      children: <Widget>[
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const AppText(
+                              text: "My Simple Todo App",
+                              fontWeight: FontWeight.bold,
+                              size: 16,
+                            ),
+                            AppText(
+                              text: _versionNumber,
+                            ),
+                            const AppText(
+                              text: "by Wirayut Chuensaen",
+                            ),
+                            const AppText(
+                              text: "@github/wirayut-chuensaen",
+                            ),
+                            const AppText(text: "Feature :"),
+                            const AppText(
+                                text:
+                                    " - Authenticate with Firebase(Login, Sign up and reset password)"),
+                            const AppText(
+                                text:
+                                    " - Read/write data with Firebase(Create update and delete todo)"),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
+                ),
+                ListTile(
                   leading: const Icon(Icons.logout_outlined),
+                  iconColor: Theme.of(context).primaryColor,
                   title: const AppText(text: "Log out"),
                   onTap: () => onLogout(),
                 ),
@@ -320,13 +309,11 @@ class _MainPageState extends State<MainPage> {
 class TodoItem extends StatefulWidget {
   final AsyncSnapshot<QuerySnapshot> snapshot;
   final int index;
-  final Function onReloadState;
 
   const TodoItem({
     super.key,
     required this.snapshot,
     required this.index,
-    required this.onReloadState,
   });
 
   @override
@@ -342,6 +329,15 @@ class _TodoItemState extends State<TodoItem> {
     super.initState();
     todo = Todo.fromJson(widget.snapshot.data!.docs[widget.index].data()
         as Map<String, dynamic>);
+  }
+
+  @override
+  void didUpdateWidget(TodoItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.snapshot != oldWidget.snapshot) {
+      todo = Todo.fromJson(widget.snapshot.data!.docs[widget.index].data()
+          as Map<String, dynamic>);
+    }
   }
 
   @override
@@ -363,7 +359,7 @@ class _TodoItemState extends State<TodoItem> {
                         MaterialPageRoute(
                             builder: (context) => AddEditTodoPage(
                                   todo: todo,
-                                ))).then((value) => widget.onReloadState());
+                                )));
                   },
                   child: AppText(
                     text: "Edit",
@@ -385,7 +381,7 @@ class _TodoItemState extends State<TodoItem> {
           onExpansionChanged: (bool expanded) {
             setState(() => expandState = expanded);
           },
-          title: AppText(text: todo!.todoTitle),
+          title: AppText(text: todo!.todoTitle.toString()),
           children: todo!.taskList
               .asMap()
               .entries

@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
           "/splash": (context) => const SplashScreenPage(),
           "/login": (context) => const LoginPage(),
           "/main": (context) => const MainPage(),
-          "/add_todo": (context) => const AddEditTodoPage(),
+          "/add_edit_todo": (context) => const AddEditTodoPage(),
         },
       ),
     );

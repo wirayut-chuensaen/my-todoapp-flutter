@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:todo_app/Widgets/AppBarCustom.dart';
 import 'package:todo_app/Widgets/AppButton.dart';
-import 'package:quickalert/models/quickalert_type.dart';
-import 'package:quickalert/widgets/quickalert_dialog.dart';
-
 import '../Services/AuthService.dart';
+import '../Widgets/AppDialog.dart';
 import '../Widgets/AppText.dart';
 import '../Widgets/AppTextField.dart';
 import '../Widgets/AppTextFieldPassword.dart';
@@ -35,34 +33,54 @@ class _RegisterPageState extends State<RegisterPage> {
 
   void onValidateForm() {
     if (_name.isEmpty) {
-      QuickAlert.show(
+      showDialog(
         context: context,
-        type: QuickAlertType.warning,
-        text: "Please enter your name.",
+        builder: (context) => AppDialog(
+          dialogType: DialogType.alert,
+          dialogLogo: DialogLogo.warning,
+          dialogTitle: "Warning",
+          dialogDescription: "Please enter your name.",
+        ),
       );
     } else if (_email.isEmpty) {
-      QuickAlert.show(
+      showDialog(
         context: context,
-        type: QuickAlertType.warning,
-        text: "Please enter your email.",
+        builder: (context) => AppDialog(
+          dialogType: DialogType.alert,
+          dialogLogo: DialogLogo.warning,
+          dialogTitle: "Warning",
+          dialogDescription: "Please enter your email.",
+        ),
       );
     } else if (_password.isEmpty) {
-      QuickAlert.show(
+      showDialog(
         context: context,
-        type: QuickAlertType.warning,
-        text: "Please enter your password.",
+        builder: (context) => AppDialog(
+          dialogType: DialogType.alert,
+          dialogLogo: DialogLogo.warning,
+          dialogTitle: "Warning",
+          dialogDescription: "Please enter your password.",
+        ),
       );
     } else if (_passwordConfirm.isEmpty) {
-      QuickAlert.show(
+      showDialog(
         context: context,
-        type: QuickAlertType.warning,
-        text: "Please enter your confirm password.",
+        builder: (context) => AppDialog(
+          dialogType: DialogType.alert,
+          dialogLogo: DialogLogo.warning,
+          dialogTitle: "Warning",
+          dialogDescription: "Please enter your confirm password.",
+        ),
       );
     } else if (_password != _passwordConfirm) {
-      QuickAlert.show(
+      showDialog(
         context: context,
-        type: QuickAlertType.warning,
-        text: "Password and confirm password do not match.",
+        builder: (context) => AppDialog(
+          dialogType: DialogType.alert,
+          dialogLogo: DialogLogo.warning,
+          dialogTitle: "Warning",
+          dialogDescription: "Password and confirm password do not match.",
+        ),
       );
     } else {
       onSignup();
@@ -76,15 +94,21 @@ class _RegisterPageState extends State<RegisterPage> {
         context, _name, _email, _password);
     if (isRegistered) {
       clearData();
-      QuickAlert.show(
-          context: context,
-          type: QuickAlertType.success,
-          barrierDismissible: false,
-          text: 'Signup success!\nPlease login',
-          onConfirmBtnTap: () {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AppDialog(
+          dialogType: DialogType.alert,
+          dialogLogo: DialogLogo.check,
+          onPopScope: false,
+          dialogTitle: "Signup success!",
+          dialogDescription: "Please login",
+          onConfirmBtnPress: () {
             Navigator.pop(context);
             Navigator.pop(context);
-          });
+          },
+        ),
+      );
     }
     EasyLoading.dismiss();
   }

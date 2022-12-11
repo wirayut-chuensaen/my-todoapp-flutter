@@ -63,7 +63,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '43228129606',
     projectId: 'my-sample-todo-app',
     storageBucket: 'my-sample-todo-app.appspot.com',
-    iosClientId: '43228129606-skcfju9k3olh5ecttj1mlilmui1kiks8.apps.googleusercontent.com',
-    iosBundleId: 'com.example.todoApp',
+    iosClientId:
+        '43228129606-skcfju9k3olh5ecttj1mlilmui1kiks8.apps.googleusercontent.com',
+    iosBundleId: 'com.wirayut.mysimpletodo.app',
   );
 }

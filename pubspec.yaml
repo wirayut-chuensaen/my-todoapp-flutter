@@ -41,11 +41,10 @@ dependencies:
   firebase_storage: ^11.0.6
   firebase_crashlytics: ^3.0.6
   firebase_analytics: ^10.0.6
-  fluttertoast: ^8.1.1
-  flutter_slidable: ^2.0.0
   flutter_easyloading: ^3.0.5
-  quickalert: ^1.0.0
   shared_preferences: ^2.0.15
+  intl: ^0.17.0
+  package_info_plus: ^3.0.2
 
 dev_dependencies:
   flutter_test:

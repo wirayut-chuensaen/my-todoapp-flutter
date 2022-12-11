@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:43228129606:android:46bf7740e1d00918989d47",
+        "mobilesdk_app_id": "1:43228129606:android:20c10e4b1f8d1cca989d47",
         "android_client_info": {
-          "package_name": "com.example.todo_app"
+          "package_name": "com.wirayut.mysimpletodo.app"
         }
       },
       "oauth_client": [
@@ -31,10 +31,10 @@
               "client_type": 3
             },
             {
-              "client_id": "43228129606-skcfju9k3olh5ecttj1mlilmui1kiks8.apps.googleusercontent.com",
+              "client_id": "43228129606-1e699tu20kndecadnluprfumgms312st.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.todoApp"
+                "bundle_id": "com.wirayut.mysimpletodo.app"
               }
             }
           ]

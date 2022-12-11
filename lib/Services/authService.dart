@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:quickalert/models/quickalert_type.dart';
-import 'package:quickalert/widgets/quickalert_dialog.dart';
+import '../Widgets/AppDialog.dart';
 
 class AuthService {
   static final auth = FirebaseAuth.instance;
@@ -15,27 +14,36 @@ class AuthService {
       return true;
     } on FirebaseAuthException catch (error) {
       if (error.code == 'invalid-email' || error.code == 'wrong-password') {
-        QuickAlert.show(
+        showDialog(
           context: context,
-          type: QuickAlertType.error,
-          title: 'Oops...',
-          text: "The username or password is invalid.",
+          builder: (context) => AppDialog(
+            dialogType: DialogType.alert,
+            dialogLogo: DialogLogo.cross,
+            dialogTitle: "Oops...",
+            dialogDescription: "The username or password is invalid.",
+          ),
         );
       } else if (error.code == 'user-not-found') {
-        QuickAlert.show(
+        showDialog(
           context: context,
-          type: QuickAlertType.error,
-          title: 'Oops...',
-          text: "The user not found.",
+          builder: (context) => AppDialog(
+            dialogType: DialogType.alert,
+            dialogLogo: DialogLogo.cross,
+            dialogTitle: "Oops...",
+            dialogDescription: "The user not found.",
+          ),
         );
       }
       return false;
     } catch (error) {
-      QuickAlert.show(
+      showDialog(
         context: context,
-        type: QuickAlertType.error,
-        title: 'Oops...',
-        text: "Something went wrong.",
+        builder: (context) => AppDialog(
+          dialogType: DialogType.alert,
+          dialogLogo: DialogLogo.cross,
+          dialogTitle: "Oops...",
+          dialogDescription: "Something went wrong.",
+        ),
       );
       return false;
     }
@@ -51,34 +59,46 @@ class AuthService {
       return true;
     } on FirebaseAuthException catch (error) {
       if (error.code == 'weak-password') {
-        QuickAlert.show(
+        showDialog(
           context: context,
-          type: QuickAlertType.error,
-          title: 'Oops...',
-          text: "The password provided is too weak.",
+          builder: (context) => AppDialog(
+            dialogType: DialogType.alert,
+            dialogLogo: DialogLogo.cross,
+            dialogTitle: "Oops...",
+            dialogDescription: "The password provided is too weak.",
+          ),
         );
       } else if (error.code == 'email-already-in-use') {
-        QuickAlert.show(
+        showDialog(
           context: context,
-          type: QuickAlertType.error,
-          title: 'Oops...',
-          text: "Entered email already in use.",
+          builder: (context) => AppDialog(
+            dialogType: DialogType.alert,
+            dialogLogo: DialogLogo.cross,
+            dialogTitle: "Oops...",
+            dialogDescription: "Entered email already in use.",
+          ),
         );
       } else if (error.code == 'invalid-email') {
-        QuickAlert.show(
+        showDialog(
           context: context,
-          type: QuickAlertType.error,
-          title: 'Oops...',
-          text: "Invalid email.",
+          builder: (context) => AppDialog(
+            dialogType: DialogType.alert,
+            dialogLogo: DialogLogo.cross,
+            dialogTitle: "Oops...",
+            dialogDescription: "Invalid email.",
+          ),
         );
       }
       return false;
     } catch (error) {
-      QuickAlert.show(
+      showDialog(
         context: context,
-        type: QuickAlertType.error,
-        title: 'Oops...',
-        text: "Something went wrong.",
+        builder: (context) => AppDialog(
+          dialogType: DialogType.alert,
+          dialogLogo: DialogLogo.cross,
+          dialogTitle: "Oops...",
+          dialogDescription: "Something went wrong.",
+        ),
       );
       return false;
     }
@@ -90,20 +110,8 @@ class AuthService {
       await auth.sendPasswordResetEmail(email: email);
       return true;
     } on FirebaseAuthException {
-      QuickAlert.show(
-        context: context,
-        type: QuickAlertType.error,
-        title: 'Oops...',
-        text: "Something went wrong.",
-      );
       return false;
     } catch (error) {
-      QuickAlert.show(
-        context: context,
-        type: QuickAlertType.error,
-        title: 'Oops...',
-        text: "Something went wrong.",
-      );
       return false;
     }
   }
