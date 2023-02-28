@@ -154,32 +154,50 @@ class _AddEditTodoPageState extends State<AddEditTodoPage> {
         ),
         child: Row(
           children: [
-            Material(
-              color: Colors.red,
-              child: InkWell(
-                onTap: () => onDeleteTodo(),
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.4,
-                  alignment: Alignment.center,
-                  child: const AppText(
-                    text: "Delete todo",
-                    color: Colors.white,
+            Container(
+              width: MediaQuery.of(context).size.width * 0.4,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.red,
+                    Colors.orange.shade800,
+                  ],
+                ),
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () => onDeleteTodo(),
+                  child: const Center(
+                    child: AppText(
+                      text: "Delete todo",
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
             ),
-            Material(
-              color: Theme.of(context).primaryColor,
-              child: InkWell(
-                onTap: () => onSubmit(),
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.6,
-                  alignment: Alignment.center,
-                  child: const AppText(
-                    text: "Update todo",
-                    color: Colors.white,
-                    size: 16,
-                    fontWeight: FontWeight.bold,
+            Container(
+              width: MediaQuery.of(context).size.width * 0.6,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.cyan,
+                    Colors.blue,
+                  ],
+                ),
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () => onSubmit(),
+                  child: const Center(
+                    child: AppText(
+                      text: "Update todo",
+                      color: Colors.white,
+                      size: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -198,9 +216,15 @@ class _AddEditTodoPageState extends State<AddEditTodoPage> {
               offset: const Offset(0, 1),
             ),
           ],
+          gradient: const LinearGradient(
+            colors: [
+              Colors.blue,
+              Colors.cyan,
+            ],
+          ),
         ),
         child: Material(
-          color: Theme.of(context).primaryColor,
+          color: Colors.transparent,
           child: InkWell(
             onTap: () => onSubmit(),
             child: const SizedBox(
@@ -224,9 +248,11 @@ class _AddEditTodoPageState extends State<AddEditTodoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBarCustom(
-        showBack: true,
         title: isUpdateTodo == false ? "Add Todo" : "Update Todo",
+        onPress: () => Navigator.pop(context),
+        isMain: false,
       ),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: Colors.blue,
@@ -243,54 +269,67 @@ class _AddEditTodoPageState extends State<AddEditTodoPage> {
           );
         },
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const AppText(
-              text: "Title",
-              size: 16,
-            ),
-            AppTextField(
-              text: title,
-              onChanged: (value) {
-                setState(() {
-                  _title = value;
-                });
-              },
-            ),
-            const SizedBox(height: 10),
-            const AppText(
-              text: "Start date",
-              size: 16,
-            ),
-            DatePicker(
-              onSelectDate: (date) {
-                setState(() {
-                  _startDate = date;
-                });
-              },
-              date: _startDate,
-            ),
-            const SizedBox(height: 10),
-            const AppText(
-              text: "End date",
-              size: 16,
-            ),
-            DatePicker(
-              onSelectDate: (date) {
-                setState(() {
-                  _endDate = date;
-                });
-              },
-              date: _endDate,
-            ),
-            const SizedBox(height: 40),
-            buildTaskList(),
-            const SizedBox(height: 80),
-          ],
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/background_main.jpg"),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: kTextTabBarHeight + 50,
+              ),
+              const AppText(
+                text: "Title",
+                size: 16,
+              ),
+              AppTextField(
+                text: title,
+                onChanged: (value) {
+                  setState(() {
+                    _title = value;
+                  });
+                },
+              ),
+              const SizedBox(height: 10),
+              const AppText(
+                text: "Start date",
+                size: 16,
+              ),
+              DatePicker(
+                onSelectDate: (date) {
+                  setState(() {
+                    _startDate = date;
+                  });
+                },
+                date: _startDate,
+              ),
+              const SizedBox(height: 10),
+              const AppText(
+                text: "End date",
+                size: 16,
+              ),
+              DatePicker(
+                onSelectDate: (date) {
+                  setState(() {
+                    _endDate = date;
+                  });
+                },
+                date: _endDate,
+              ),
+              const SizedBox(height: 40),
+              buildTaskList(),
+              const SizedBox(height: 80),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: buildBottomButton(),
@@ -311,6 +350,7 @@ class _AddEditTodoPageState extends State<AddEditTodoPage> {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: _taskList.length,
+            padding: const EdgeInsets.all(0),
             itemBuilder: (ctx, index) => buildTaskItem(_taskList[index], index),
           ),
         ],

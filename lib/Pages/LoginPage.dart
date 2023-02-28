@@ -42,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
     String version = packageInfo.version;
     String buildNumber = packageInfo.buildNumber;
     setState(() {
-      versionNumber = 'version $version ($buildNumber)';
+      versionNumber = 'Version $version ($buildNumber)';
     });
   }
 
@@ -95,6 +95,12 @@ class _LoginPageState extends State<LoginPage> {
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           padding: const EdgeInsets.fromLTRB(15, kToolbarHeight, 15, 0),
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/background.jpg"),
+              fit: BoxFit.cover,
+            ),
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,
@@ -105,14 +111,28 @@ class _LoginPageState extends State<LoginPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20),
                     child: Center(
-                      child: Icon(
-                        Icons.lock,
-                        size: MediaQuery.of(context).size.width * 0.4,
-                        color: Theme.of(context).primaryColor,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              offset: const Offset(0, 1),
+                              color: Colors.grey.shade100,
+                              spreadRadius: 4,
+                              blurRadius: 8,
+                            ),
+                          ],
+                        ),
+                        child: ClipOval(
+                          child: Image.asset(
+                            "assets/login_image.jpg",
+                            width: MediaQuery.of(context).size.width * 0.6,
+                            height: MediaQuery.of(context).size.width * 0.6,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 10),
                   const AppText(text: "Email"),
                   AppTextField(
                     text: email,
@@ -166,7 +186,7 @@ class _LoginPageState extends State<LoginPage> {
               Center(
                 child: AppText(
                   text: versionNumber,
-                  color: Theme.of(context).primaryColor,
+                  color: Colors.indigo,
                 ),
               ),
             ],

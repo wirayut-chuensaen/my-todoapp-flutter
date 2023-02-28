@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/Pages/AddEditTodoPage.dart';
 import 'package:todo_app/Pages/LoginPage.dart';
 import 'package:todo_app/Services/TodoService.dart';
+import 'package:todo_app/Widgets/AppBarCustom.dart';
 import 'package:todo_app/Widgets/AppSnackBar.dart';
 import 'package:todo_app/Widgets/AppText.dart';
 import '../Services/AuthService.dart';
@@ -24,6 +25,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   String _email = "";
   String _versionNumber = "";
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   @override
   void initState() {
@@ -143,16 +145,24 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: AppText(
-          text: "Hi, ${AuthService.getUserDisplayName()}",
-          color: Colors.white,
-        ),
-        backgroundColor: Theme.of(context).primaryColor,
+      key: _scaffoldKey,
+      extendBodyBehindAppBar: true,
+      appBar: AppBarCustom(
+        title: "Hi, ${AuthService.getUserDisplayName()}",
+        onPress: () => _scaffoldKey.currentState?.openDrawer(),
+        isMain: true,
       ),
+      // drawer: buildDrawer(),
       drawer: buildDrawer(),
-      body: buildListBody(),
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/background_main.jpg"),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: buildListBody(),
+      ),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: Colors.blue,
         label: const AppText(
@@ -195,7 +205,10 @@ class _MainPageState extends State<MainPage> {
         } else if (snapshot.hasData && snapshot.data!.size > 0) {
           return ListView.builder(
             itemCount: snapshot.data!.docs.length,
-            padding: const EdgeInsets.only(top: 10, bottom: 80),
+            padding: const EdgeInsets.only(
+              top: kToolbarHeight + 50,
+              bottom: 80,
+            ),
             itemBuilder: (context, index) => TodoItem(
               snapshot: snapshot,
               index: index,
@@ -209,98 +222,133 @@ class _MainPageState extends State<MainPage> {
 
   Widget buildDrawer() {
     return Drawer(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SizedBox(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(
-                  height: kToolbarHeight + 20,
-                ),
-                Icon(
-                  Icons.menu_book_outlined,
-                  size: MediaQuery.of(context).size.width * 0.4,
-                  color: Theme.of(context).primaryColor,
-                ),
-                const SizedBox(height: 20),
-                AppText(
-                  text: "My Simple Todo App",
-                  color: Theme.of(context).primaryColor,
-                  size: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-                AppText(
-                  text: "by Wirayut Chuensaen",
-                  color: Theme.of(context).primaryColor,
-                ),
-                AppText(
-                  text: "@github/wirayut-chuensaen",
-                  color: Theme.of(context).primaryColor,
-                ),
-              ],
-            ),
+      child: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/background.jpg"),
+            fit: BoxFit.cover,
           ),
-          Container(
-            padding: const EdgeInsets.only(bottom: kToolbarHeight / 2),
-            child: Column(
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.key_outlined),
-                  iconColor: Theme.of(context).primaryColor,
-                  title: const AppText(text: "Reset password"),
-                  onTap: () => onResetPassword(),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.help),
-                  iconColor: Theme.of(context).primaryColor,
-                  title: const AppText(text: "About"),
-                  onTap: () {
-                    showAboutDialog(
-                      context: context,
-                      applicationName: "About",
-                      children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const AppText(
-                              text: "My Simple Todo App",
-                              fontWeight: FontWeight.bold,
-                              size: 16,
-                            ),
-                            AppText(
-                              text: _versionNumber,
-                            ),
-                            const AppText(
-                              text: "by Wirayut Chuensaen",
-                            ),
-                            const AppText(
-                              text: "@github/wirayut-chuensaen",
-                            ),
-                            const AppText(text: "Feature :"),
-                            const AppText(
-                                text:
-                                    " - Authenticate with Firebase(Login, Sign up and reset password)"),
-                            const AppText(
-                                text:
-                                    " - Read/write data with Firebase(Create update and delete todo)"),
-                          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  const SizedBox(
+                    height: kToolbarHeight + 20,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      boxShadow: [
+                        BoxShadow(
+                          offset: const Offset(0, 1),
+                          color: Colors.grey.shade100,
+                          spreadRadius: 4,
+                          blurRadius: 8,
                         ),
                       ],
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.logout_outlined),
-                  iconColor: Theme.of(context).primaryColor,
-                  title: const AppText(text: "Log out"),
-                  onTap: () => onLogout(),
-                ),
-              ],
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.asset(
+                        "assets/todo.jpg",
+                        width: MediaQuery.of(context).size.width * 0.6,
+                        height: MediaQuery.of(context).size.width * 0.6,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  AppText(
+                    text: "My Todo App",
+                    color: Theme.of(context).primaryColor,
+                    size: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  AppText(
+                    text: "by Wirayut Chuensaen",
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  AppText(
+                    text: "@github/wirayut-chuensaen",
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+            Container(
+              padding: const EdgeInsets.only(bottom: kToolbarHeight / 2),
+              child: Column(
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.key_outlined),
+                    iconColor: Theme.of(context).primaryColor,
+                    title: const AppText(text: "Reset password"),
+                    onTap: () => onResetPassword(),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.help),
+                    iconColor: Theme.of(context).primaryColor,
+                    title: const AppText(text: "About"),
+                    onTap: () {
+                      showAboutDialog(
+                        context: context,
+                        applicationName: "About",
+                        applicationIcon: const Icon(
+                          Icons.menu_book,
+                          color: Colors.blue,
+                          size: 30,
+                        ),
+                        children: <Widget>[
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const AppText(
+                                text: "My Todo App",
+                                fontWeight: FontWeight.bold,
+                                size: 16,
+                              ),
+                              AppText(
+                                text: _versionNumber,
+                              ),
+                              const AppText(
+                                text: "by Wirayut Chuensaen",
+                              ),
+                              const AppText(
+                                text: "@github/wirayut-chuensaen",
+                              ),
+                              const AppText(text: "Feature :"),
+                              const AppText(
+                                  text:
+                                      " - Authenticate with Firebase(Login, Sign up and reset password)"),
+                              const AppText(
+                                  text:
+                                      " - Read/write data with Firebase(Create update and delete todo)"),
+                            ],
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.logout_outlined),
+                    iconColor: Colors.red,
+                    title: const AppText(
+                      text: "Log out",
+                      color: Colors.red,
+                    ),
+                    onTap: () => onLogout(),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -322,7 +370,7 @@ class TodoItem extends StatefulWidget {
 
 class _TodoItemState extends State<TodoItem> {
   Todo? todo;
-  bool expandState = false;
+  bool expandState = true;
 
   @override
   void initState() {

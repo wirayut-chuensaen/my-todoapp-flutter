@@ -36,8 +36,11 @@ class _AppTextFieldState extends State<AppTextField> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
       height: 50 * double.parse(widget.maxLines.toString()),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(6.0),
+      ),
       child: TextField(
         autofocus: false,
         style: TextStyle(
@@ -45,9 +48,9 @@ class _AppTextFieldState extends State<AppTextField> {
           fontFamily: "Prompt",
         ),
         enabled: widget.editable,
+        textAlignVertical: TextAlignVertical.center,
         decoration: InputDecoration(
           counterText: "",
-          contentPadding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
           hintText: widget.hintText,
           filled: true,
           fillColor: widget.editable
@@ -60,21 +63,10 @@ class _AppTextFieldState extends State<AppTextField> {
             borderRadius: BorderRadius.circular(6.0),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide:
-                const BorderSide(color: Color.fromRGBO(232, 232, 232, 1)),
+            borderSide: const BorderSide(color: Colors.blue),
             borderRadius: BorderRadius.circular(6.0),
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide:
-                const BorderSide(color: Color.fromRGBO(232, 232, 232, 1)),
-            borderRadius: BorderRadius.circular(6.0),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderSide:
-                const BorderSide(color: Color.fromRGBO(232, 232, 232, 1)),
-            borderRadius: BorderRadius.circular(6.0),
-          ),
-          disabledBorder: OutlineInputBorder(
             borderSide:
                 const BorderSide(color: Color.fromRGBO(232, 232, 232, 1)),
             borderRadius: BorderRadius.circular(6.0),

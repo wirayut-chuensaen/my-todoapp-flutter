@@ -18,18 +18,37 @@ class AppButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton(
-        onPressed: onSubmit as void Function()?,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).primaryColor,
-          padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(borderRadius),
+      height: 50,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [
+              Colors.blue,
+              Colors.cyan,
+            ],
           ),
+          borderRadius: BorderRadius.circular(borderRadius),
         ),
-        child: Text(
-          text!,
-          style: const TextStyle(color: Colors.white, fontFamily: "Prompt"),
+        child: ElevatedButton(
+          onPressed: onSubmit as void Function()?,
+          style: ElevatedButton.styleFrom(
+            // padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(
+                borderRadius,
+              ),
+            ),
+          ),
+          child: Text(
+            text!,
+            style: const TextStyle(
+              color: Colors.white,
+              fontFamily: "Prompt",
+              fontSize: 14,
+            ),
+          ),
         ),
       ),
     );

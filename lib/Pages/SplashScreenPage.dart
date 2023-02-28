@@ -1,12 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:async';
-
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/Pages/LoginPage.dart';
 import 'package:todo_app/Pages/MainPage.dart';
-import 'package:todo_app/Widgets/AppText.dart';
 
 class SplashScreenPage extends StatefulWidget {
   const SplashScreenPage({super.key});
@@ -42,34 +40,19 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
-      color: Colors.white,
       padding: const EdgeInsets.only(top: kToolbarHeight),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(),
-          Column(
-            children: [
-              Icon(
-                Icons.menu_book_outlined,
-                size: MediaQuery.of(context).size.width * 0.4,
-                color: Theme.of(context).primaryColor,
-              ),
-              AppText(
-                text: "My Simple Todo App",
-                color: Theme.of(context).primaryColor,
-                size: 30,
-                fontWeight: FontWeight.bold,
-              ),
-            ],
-          ),
-          AppText(
-            text: "By Wirayut Chuensaen",
-            color: Theme.of(context).primaryColor,
-            size: 16,
-          ),
-        ],
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage("assets/background.jpg"),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Center(
+        child: Image.asset(
+          "assets/splash.jpg",
+          width: MediaQuery.of(context).size.width * 0.6,
+          height: MediaQuery.of(context).size.width * 0.6,
+        ),
       ),
     );
   }
