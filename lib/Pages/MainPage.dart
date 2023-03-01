@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/Pages/AddEditTodoPage.dart';
 import 'package:todo_app/Pages/LoginPage.dart';
@@ -25,7 +26,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   String _email = "";
   String _versionNumber = "";
-  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   @override
   void initState() {
@@ -56,7 +57,7 @@ class _MainPageState extends State<MainPage> {
         dialogLogo: DialogLogo.contact,
         dialogTitle: "Enter your email",
         dialogDescription:
-            "We will send you an email to reset your password by email.",
+            "System will send you an email to reset your password by email.",
         inputPlaceHolder: "Email",
         inputValue: _email,
         onInputChange: (value) {
@@ -152,7 +153,6 @@ class _MainPageState extends State<MainPage> {
         onPress: () => _scaffoldKey.currentState?.openDrawer(),
         isMain: true,
       ),
-      // drawer: buildDrawer(),
       drawer: buildDrawer(),
       body: Container(
         decoration: const BoxDecoration(
@@ -192,7 +192,7 @@ class _MainPageState extends State<MainPage> {
             builder: (context) => AppDialog(
               dialogType: DialogType.alert,
               dialogLogo: DialogLogo.warning,
-              dialogTitle: "oops!",
+              dialogTitle: "Oops!",
               dialogDescription: "Something went wrong\nCannot get todo list.",
             ),
           );
@@ -311,7 +311,7 @@ class _MainPageState extends State<MainPage> {
                               const AppText(
                                 text: "My Todo App",
                                 fontWeight: FontWeight.bold,
-                                size: 16,
+                                size: 18,
                               ),
                               AppText(
                                 text: _versionNumber,
@@ -322,13 +322,18 @@ class _MainPageState extends State<MainPage> {
                               const AppText(
                                 text: "@github/wirayut-chuensaen",
                               ),
-                              const AppText(text: "Feature :"),
+                              const AppText(
+                                text: "Feature :",
+                                fontWeight: FontWeight.bold,
+                              ),
                               const AppText(
                                   text:
                                       " - Authenticate with Firebase(Login, Sign up and reset password)"),
                               const AppText(
                                   text:
                                       " - Read/write data with Firebase(Create update and delete todo)"),
+                              const AppText(
+                                  text: "Image asset from freepik.com"),
                             ],
                           ),
                         ],
@@ -371,20 +376,54 @@ class TodoItem extends StatefulWidget {
 class _TodoItemState extends State<TodoItem> {
   Todo? todo;
   bool expandState = true;
+  String todoStatus = "on_going";
+  String startDate = "";
+  String endDate = "";
 
   @override
   void initState() {
     super.initState();
+    initialTodoItem();
+  }
+
+  void initialTodoItem() {
     todo = Todo.fromJson(widget.snapshot.data!.docs[widget.index].data()
         as Map<String, dynamic>);
+    // print("todo : $todo");
+    if (todo != null) {
+      DateTime todoStartDate =
+          DateFormat("yyyy-MM-dd").parse(todo!.startDate.toString());
+      DateTime todoEndDate =
+          DateFormat("yyyy-MM-dd").parse(todo!.endDate.toString());
+      DateTime nowDate =
+          DateFormat("yyyy-MM-dd").parse(DateTime.now().toString());
+      // print("todoEndDate : $todoEndDate");
+      // print("nowDate : $nowDate");
+      bool isTimeout = todoEndDate.compareTo(nowDate) >= 0 ? false : true;
+      bool isComplete = true;
+      for (var element in todo!.taskList) {
+        if (element.status == false) {
+          isComplete = false;
+        }
+      }
+      setState(() {
+        todoStatus = isComplete == true
+            ? "completed"
+            : isTimeout == false
+                ? "on_going"
+                : "timeout";
+        startDate =
+            "${todoStartDate.year}-${todoStartDate.month}-${todoStartDate.day}";
+        endDate = "${todoEndDate.year}-${todoEndDate.month}-${todoEndDate.day}";
+      });
+    }
   }
 
   @override
   void didUpdateWidget(TodoItem oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.snapshot != oldWidget.snapshot) {
-      todo = Todo.fromJson(widget.snapshot.data!.docs[widget.index].data()
-          as Map<String, dynamic>);
+      initialTodoItem();
     }
   }
 
@@ -393,6 +432,17 @@ class _TodoItemState extends State<TodoItem> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          side: BorderSide(
+            color: todoStatus == "on_going"
+                ? Colors.blue
+                : todoStatus == "completed"
+                    ? Colors.green
+                    : Colors.red,
+            width: 2.5,
+          ),
+        ),
         child: ExpansionTile(
           initiallyExpanded: true,
           trailing: SizedBox(
@@ -429,7 +479,67 @@ class _TodoItemState extends State<TodoItem> {
           onExpansionChanged: (bool expanded) {
             setState(() => expandState = expanded);
           },
-          title: AppText(text: todo!.todoTitle.toString()),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const AppText(
+                    text: "Todo : ",
+                    size: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.indigo,
+                  ),
+                  Flexible(
+                    child: AppText(
+                      text: todo!.todoTitle.toString(),
+                      size: 18,
+                      color: Colors.indigo,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  const AppText(
+                    text: "Status : ",
+                    fontWeight: FontWeight.bold,
+                  ),
+                  AppText(
+                    text: todoStatus == "on_going"
+                        ? "On going"
+                        : todoStatus == "completed"
+                            ? "Completed"
+                            : "Timeout",
+                    color: todoStatus == "on_going"
+                        ? Colors.blue
+                        : todoStatus == "completed"
+                            ? Colors.green
+                            : Colors.red,
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  const AppText(
+                    text: "Start date : ",
+                    fontWeight: FontWeight.bold,
+                  ),
+                  AppText(text: startDate),
+                ],
+              ),
+              Row(
+                children: [
+                  const AppText(
+                    text: "End date : ",
+                    fontWeight: FontWeight.bold,
+                  ),
+                  AppText(text: endDate),
+                ],
+              ),
+            ],
+          ),
           children: todo!.taskList
               .asMap()
               .entries

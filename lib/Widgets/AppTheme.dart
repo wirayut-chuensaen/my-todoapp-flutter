@@ -4,8 +4,7 @@ final ThemeData themeData = ThemeData(
   primaryColor: Colors.blue,
   canvasColor: Colors.white,
   textTheme: ThemeData.light().textTheme.copyWith(
-        bodyText1: const TextStyle(
-            color: Color.fromRGBO(51, 51, 51, 1), fontFamily: "Prompt"),
+        bodyLarge: const TextStyle(color: Colors.black, fontFamily: "MN_BURI"),
       ),
   hintColor: Colors.black26,
 );

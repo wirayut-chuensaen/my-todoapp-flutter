@@ -12,9 +12,9 @@ class AppText extends StatelessWidget {
   const AppText({
     super.key,
     required this.text,
-    this.size = 14,
+    this.size = 16,
     this.fontWeight = FontWeight.normal,
-    this.color = const Color.fromRGBO(51, 51, 51, 1),
+    this.color = Colors.black,
     this.fontStyle = FontStyle.normal,
     this.textDecoration = TextDecoration.none,
     this.textAlign = TextAlign.start,
@@ -31,7 +31,7 @@ class AppText extends StatelessWidget {
           color: color,
           fontStyle: fontStyle,
           decoration: textDecoration,
-          fontFamily: "Prompt",
+          fontFamily: "MN_BURI",
         ));
   }
 }

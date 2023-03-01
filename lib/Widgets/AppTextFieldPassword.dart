@@ -7,6 +7,7 @@ class AppTextFieldPassword extends StatefulWidget {
   final String? hintText;
   final IconData? leftIcon;
   final ValueChanged? onChanged;
+  final double fontSize;
 
   const AppTextFieldPassword({
     super.key,
@@ -14,6 +15,7 @@ class AppTextFieldPassword extends StatefulWidget {
     this.hintText = "",
     this.leftIcon,
     this.onChanged,
+    this.fontSize = 16,
   });
 
   @override
@@ -61,8 +63,9 @@ class _AppTextFieldPasswordState extends State<AppTextFieldPassword> {
       height: 50,
       margin: const EdgeInsets.symmetric(vertical: 5),
       child: TextField(
-        style: const TextStyle(
-          fontFamily: "Prompt",
+        style: TextStyle(
+          fontSize: widget.fontSize,
+          fontFamily: "MN_BURI",
         ),
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.fromLTRB(10, 10, 10, 10),

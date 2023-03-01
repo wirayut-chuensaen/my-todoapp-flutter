@@ -45,8 +45,8 @@ class AppButton extends StatelessWidget {
             text!,
             style: const TextStyle(
               color: Colors.white,
-              fontFamily: "Prompt",
-              fontSize: 14,
+              fontFamily: "MN_BURI",
+              fontSize: 16,
             ),
           ),
         ),

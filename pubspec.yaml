@@ -38,7 +38,6 @@ dependencies:
   firebase_auth: ^4.1.3
   firebase_core: ^2.3.0
   cloud_firestore: ^4.1.0
-  firebase_storage: ^11.0.6
   firebase_crashlytics: ^3.0.6
   firebase_analytics: ^10.0.6
   flutter_easyloading: ^3.0.5
@@ -98,10 +97,12 @@ flutter:
   #         weight: 700
   #
   fonts:
-    - family: Prompt
+    - family: MN_BURI
       fonts:
-        - asset: assets/fonts/Prompt-Regular.ttf
-        - asset: assets/fonts/Prompt-SemiBold.ttf
+        - asset: assets/fonts/MN_BURI.ttf
+        - asset: assets/fonts/MN_BURI_Bold.ttf
+        - asset: assets/fonts/MN_BURI_Bold_Italic.ttf
+        - asset: assets/fonts/MN_BURI_Bold_Italic.ttf
           weight: 700
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

@@ -34,12 +34,11 @@ class MyApp extends StatelessWidget {
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);
         if (!currentFocus.hasPrimaryFocus) {
-          // currentFocus.unfocus();
           FocusManager.instance.primaryFocus?.unfocus();
         }
       },
       child: MaterialApp(
-        title: 'My Simple Todo App',
+        title: 'My Todo App',
         theme: themeData,
         builder: EasyLoading.init(),
         home: const SplashScreenPage(),

@@ -85,6 +85,8 @@ class _AppBarCustomState extends State<AppBarCustom> {
                     child: AppText(
                       text: widget.title.toString(),
                       color: Colors.white,
+                      size: 18,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),

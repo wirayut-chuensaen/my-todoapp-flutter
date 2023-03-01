@@ -195,7 +195,7 @@ class _AddEditTodoPageState extends State<AddEditTodoPage> {
                     child: AppText(
                       text: "Update todo",
                       color: Colors.white,
-                      size: 16,
+                      size: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -233,7 +233,7 @@ class _AddEditTodoPageState extends State<AddEditTodoPage> {
               child: Center(
                 child: AppText(
                   text: "Add Todo",
-                  size: 16,
+                  size: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
@@ -289,7 +289,7 @@ class _AddEditTodoPageState extends State<AddEditTodoPage> {
               ),
               const AppText(
                 text: "Title",
-                size: 16,
+                size: 18,
               ),
               AppTextField(
                 text: title,
@@ -302,12 +302,13 @@ class _AddEditTodoPageState extends State<AddEditTodoPage> {
               const SizedBox(height: 10),
               const AppText(
                 text: "Start date",
-                size: 16,
+                size: 18,
               ),
               DatePicker(
                 onSelectDate: (date) {
                   setState(() {
                     _startDate = date;
+                    _endDate = "";
                   });
                 },
                 date: _startDate,
@@ -315,7 +316,7 @@ class _AddEditTodoPageState extends State<AddEditTodoPage> {
               const SizedBox(height: 10),
               const AppText(
                 text: "End date",
-                size: 16,
+                size: 18,
               ),
               DatePicker(
                 onSelectDate: (date) {
@@ -324,6 +325,7 @@ class _AddEditTodoPageState extends State<AddEditTodoPage> {
                   });
                 },
                 date: _endDate,
+                minDate: _startDate,
               ),
               const SizedBox(height: 40),
               buildTaskList(),
@@ -343,7 +345,7 @@ class _AddEditTodoPageState extends State<AddEditTodoPage> {
         children: [
           const AppText(
             text: "Task list :",
-            size: 16,
+            size: 18,
           ),
           const SizedBox(height: 10),
           ListView.builder(
@@ -361,14 +363,14 @@ class _AddEditTodoPageState extends State<AddEditTodoPage> {
         padding: EdgeInsets.only(top: 30, bottom: 30),
         child: AppText(
           text: "No task",
-          size: 14,
+          size: 16,
         ),
       ),
     );
   }
 
   Widget buildTaskItem(Task task, int index) {
-    final taskDescription = TextEditingController();
+    final TextEditingController taskDescription = TextEditingController();
     taskDescription.text =
         task.taskDescription != null ? task.taskDescription.toString() : "";
 
@@ -408,10 +410,10 @@ class _AddEditTodoPageState extends State<AddEditTodoPage> {
             height: 50,
             width: 34,
             margin: const EdgeInsets.only(top: 18),
-            color: Colors.white,
+            color: Colors.transparent,
             alignment: Alignment.centerRight,
             child: const Icon(
-              Icons.delete_outline,
+              Icons.delete,
               color: Colors.red,
               size: 30,
             ),
@@ -425,8 +427,14 @@ class _AddEditTodoPageState extends State<AddEditTodoPage> {
 class DatePicker extends StatefulWidget {
   final Function(String date)? onSelectDate;
   final String? date;
+  final String minDate;
 
-  const DatePicker({super.key, this.onSelectDate, this.date});
+  const DatePicker({
+    super.key,
+    this.onSelectDate,
+    this.date,
+    this.minDate = "",
+  });
 
   @override
   State<DatePicker> createState() => _DatePickerState();
@@ -450,14 +458,30 @@ class _DatePickerState extends State<DatePicker> {
         dateShow = "${tempDate.year}-${tempDate.month}-${tempDate.day}";
         dateTime = tempDate;
       });
+    } else {
+      setState(() {
+        dateShow = "";
+        dateTime = null;
+      });
+    }
+  }
+
+  @override
+  void didUpdateWidget(DatePicker oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.date != oldWidget.date) {
+      initDate();
     }
   }
 
   void selectDate() async {
+    DateTime minDate = widget.minDate != ""
+        ? DateFormat("yyyy-MM-dd hh:mm:ss").parse(widget.minDate.toString())
+        : DateTime.now();
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: dateTime ?? DateTime.now(),
-      firstDate: DateTime(2000),
+      initialDate: dateTime ?? minDate,
+      firstDate: minDate,
       lastDate: DateTime(9999),
     );
     if (picked != null) {

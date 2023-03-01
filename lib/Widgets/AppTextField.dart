@@ -23,7 +23,7 @@ class AppTextField extends StatefulWidget {
     this.obscureText = false,
     this.onChanged,
     this.maxLines = 1,
-    this.fontSize = 14,
+    this.fontSize = 16,
     this.maxLength = 0,
     this.editable = true,
   });
@@ -45,7 +45,7 @@ class _AppTextFieldState extends State<AppTextField> {
         autofocus: false,
         style: TextStyle(
           fontSize: widget.fontSize,
-          fontFamily: "Prompt",
+          fontFamily: "MN_BURI",
         ),
         enabled: widget.editable,
         textAlignVertical: TextAlignVertical.center,

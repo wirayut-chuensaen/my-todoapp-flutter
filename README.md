@@ -1,16 +1,32 @@
-# todo_app
+# My Todo App (Flutter)
+## By Wirayut Chuensaen
 
-A new Flutter project.
+### Package used :
+- firebase_auth
+- firebase_core
+- cloud_firestore
+- firebase_crashlytics
+- firebase_analytics
+- flutter_easyloading
+- shared_preferences
+- intl
+- package_info_plus
 
-## Getting Started
+Image assets by [freepik.com](https://www.freepik.com/)
 
-This project is a starting point for a Flutter application.
+Font used : [MN-Buri](https://www.f0nt.com/release/mn-buri)
+### Features :
+- Authenticate by Firebase Auth. (Login, Sign up and reset password)
+- Add, edit and delete todo data.
+- Check todo task [✔]
+- Display todo status. (On going, Completed and Timeout)
+### Some screenshots :
+![01](https://firebasestorage.googleapis.com/v0/b/wirayut-chuensaen-github-b6b35.appspot.com/o/my-todo-app%2FScreenshot_2023-03-02-00-25-54-978_com.wirayut.mysimpletodo.app.jpg?alt=media&token=d0c2c9b3-6152-490b-96fd-ac17c885e197)
+![02](https://firebasestorage.googleapis.com/v0/b/wirayut-chuensaen-github-b6b35.appspot.com/o/my-todo-app%2FScreenshot_2023-03-02-00-25-33-213_com.wirayut.mysimpletodo.app.jpg?alt=media&token=d952c502-ece1-4df3-9996-e347da90d869)
+![03](https://firebasestorage.googleapis.com/v0/b/wirayut-chuensaen-github-b6b35.appspot.com/o/my-todo-app%2FScreenshot_2023-03-02-00-24-55-644_com.wirayut.mysimpletodo.app.jpg?alt=media&token=23c6f208-42cf-493f-81a4-47ffcb145c29)
+![04](https://firebasestorage.googleapis.com/v0/b/wirayut-chuensaen-github-b6b35.appspot.com/o/my-todo-app%2FScreenshot_2023-03-02-00-23-51-908_com.wirayut.mysimpletodo.app.jpg?alt=media&token=7553b8e7-217b-41c5-ba65-0f3108201991)
 
-A few resources to get you started if this is your first Flutter project:
+### Other links :
+- [Full information](https://wirayut-chuensaen.github.io/)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- [APK 1.0.0(1)](https://drive.google.com/file/d/1UL5lOSxDciarg_n0XmGteShfHt5592Q8/view?usp=sharing)
