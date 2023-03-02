@@ -20,7 +20,7 @@ Font used : [MN-Buri](https://www.f0nt.com/release/mn-buri)
 - Authenticate by Firebase Auth. (Login, Sign up and reset password)
 - Add, edit and delete todo data.
 - Check todo task [✔]
-- Display todo status. (On going, Completed and Timeout)
+- Display todo status. (Ongoing, Completed and Timeout)
 ### Some screenshots :
 ![01](doc/splash_screen.jpg)
 ![02](doc/login_screen.jpg)

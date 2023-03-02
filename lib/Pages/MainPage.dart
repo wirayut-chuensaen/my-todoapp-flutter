@@ -508,7 +508,7 @@ class _TodoItemState extends State<TodoItem> {
                   ),
                   AppText(
                     text: todoStatus == "on_going"
-                        ? "On going"
+                        ? "Ongoing"
                         : todoStatus == "completed"
                             ? "Completed"
                             : "Timeout",
