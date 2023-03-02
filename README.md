@@ -11,6 +11,7 @@
 - shared_preferences
 - intl
 - package_info_plus
+- flutter_launcher_icons
 
 Image assets by [freepik.com](https://www.freepik.com/)
 
