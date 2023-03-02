@@ -28,6 +28,6 @@ Font used : [MN-Buri](https://www.f0nt.com/release/mn-buri)
 ![04](https://firebasestorage.googleapis.com/v0/b/wirayut-chuensaen-github-b6b35.appspot.com/o/my-todo-app%2FScreenshot_2023-03-02-00-23-51-908_com.wirayut.mysimpletodo.app.jpg?alt=media&token=7553b8e7-217b-41c5-ba65-0f3108201991)
 
 ### Other links :
-- [Full information](https://wirayut-chuensaen.github.io/)
+- [Full information](https://wirayut-chuensaen.github.io/WorksPage)
 
-- [APK 1.0.0(1)](https://drive.google.com/file/d/1UL5lOSxDciarg_n0XmGteShfHt5592Q8/view?usp=sharing)
+- [APK 1.0.0(1)](https://drive.google.com/file/d/1sC3cpS2DNlcn-sXbUo77BwRwh-f6IxUH/view?usp=sharing)
