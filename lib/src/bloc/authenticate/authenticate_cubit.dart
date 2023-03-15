@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../Pages/LoginPage.dart';
 import '../../Pages/MainPage.dart';
 import '../../Services/AuthService.dart';
-import '../../Widgets/AppDialog.dart';
 
 part 'authenticate_state.dart';
 
