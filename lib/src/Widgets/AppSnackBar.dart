@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/Widgets/AppText.dart';
+import 'package:todo_app/src/Widgets/AppText.dart';
 
 void snackbar(String text, BuildContext context) {
   final snackBar = SnackBar(

@@ -1,10 +1,8 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
-import 'package:todo_app/Pages/LoginPage.dart';
-import 'package:todo_app/Pages/MainPage.dart';
+import 'package:todo_app/src/Pages/LoginPage.dart';
+import 'package:todo_app/src/Pages/MainPage.dart';
 
 class SplashScreenPage extends StatefulWidget {
   const SplashScreenPage({super.key});

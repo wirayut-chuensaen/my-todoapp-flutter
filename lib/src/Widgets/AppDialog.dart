@@ -1,8 +1,8 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
-import 'package:todo_app/Widgets/AppText.dart';
-import 'package:todo_app/Widgets/AppTextField.dart';
+import 'package:todo_app/src/Widgets/AppText.dart';
+import 'package:todo_app/src/Widgets/AppTextField.dart';
 
 enum DialogType {
   alert,

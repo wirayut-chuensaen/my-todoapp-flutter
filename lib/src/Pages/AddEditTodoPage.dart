@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:intl/intl.dart';
-import 'package:todo_app/Widgets/AppBarCustom.dart';
-import 'package:todo_app/Widgets/AppDialog.dart';
-import 'package:todo_app/Widgets/AppSnackBar.dart';
-import 'package:todo_app/Widgets/AppText.dart';
+import 'package:todo_app/src/Widgets/AppBarCustom.dart';
+import 'package:todo_app/src/Widgets/AppDialog.dart';
+import 'package:todo_app/src/Widgets/AppSnackBar.dart';
+import 'package:todo_app/src/Widgets/AppText.dart';
 import '../Models/Task.dart';
 import '../Models/Todo.dart';
 import '../Services/TodoService.dart';

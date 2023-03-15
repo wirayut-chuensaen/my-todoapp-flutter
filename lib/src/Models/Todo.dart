@@ -1,4 +1,4 @@
-import "package:todo_app/Models/Task.dart";
+import "package:todo_app/src/Models/Task.dart";
 
 class Todo {
   final String uuid;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/Widgets/AppText.dart';
+import 'package:todo_app/src/Widgets/AppText.dart';
 
 class AppBarCustom extends StatefulWidget implements PreferredSizeWidget {
   final String? title;

@@ -2,15 +2,15 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:todo_app/Pages/AddEditTodoPage.dart';
-import 'package:todo_app/Pages/LoginPage.dart';
-import 'package:todo_app/Services/TodoService.dart';
-import 'package:todo_app/Widgets/AppBarCustom.dart';
-import 'package:todo_app/Widgets/AppSnackBar.dart';
-import 'package:todo_app/Widgets/AppText.dart';
+import 'package:todo_app/src/Pages/AddEditTodoPage.dart';
+import 'package:todo_app/src/Services/TodoService.dart';
+import 'package:todo_app/src/Widgets/AppBarCustom.dart';
+import 'package:todo_app/src/Widgets/AppSnackBar.dart';
+import 'package:todo_app/src/Widgets/AppText.dart';
+import 'package:todo_app/src/bloc/authenticate/authenticate_cubit.dart';
 import '../Services/AuthService.dart';
 import '../Models/Todo.dart';
 import '../Widgets/AppDialog.dart';
@@ -80,30 +80,31 @@ class _MainPageState extends State<MainPage> {
           onPopScope: false,
           dialogTitle: "Confirm send reset password email?",
           onConfirmBtnPress: () async {
-            EasyLoading.show(status: "Loading...");
-            bool isReseted = await AuthService.resetPassword(context, _email);
-            if (isReseted) {
-              EasyLoading.dismiss();
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (context) => AppDialog(
-                  dialogType: DialogType.alert,
-                  dialogLogo: DialogLogo.check,
-                  onPopScope: false,
-                  dialogDescription:
-                      "Password reset email sent successfully. If you can't find it, it might be in your junk mail.",
-                  onConfirmBtnPress: () {
-                    Navigator.pop(context);
-                    onLogout();
-                  },
-                ),
-              );
-            } else {
-              EasyLoading.dismiss();
-              Navigator.pop(context);
-              snackbar("Something went wrong.", context);
-            }
+            context
+                .read<AuthenticateCubit>()
+                .onResetPasswordAction(context)
+                .then((value) {
+              if (value) {
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) => AppDialog(
+                    dialogType: DialogType.alert,
+                    dialogLogo: DialogLogo.check,
+                    onPopScope: false,
+                    dialogDescription:
+                        "Password reset email sent successfully. If you can't find it, it might be in your junk mail.",
+                    onConfirmBtnPress: () {
+                      Navigator.pop(context);
+                      context.read<AuthenticateCubit>().onLogoutAction(context);
+                    },
+                  ),
+                );
+              } else {
+                Navigator.pop(context);
+                snackbar("Something went wrong.", context);
+              }
+            });
           },
         ),
       );
@@ -130,15 +131,8 @@ class _MainPageState extends State<MainPage> {
         dialogLogo: DialogLogo.warning,
         onPopScope: false,
         dialogTitle: "Confirm logout?",
-        onConfirmBtnPress: () async {
-          var prefs = await SharedPreferences.getInstance();
-          await prefs.clear();
-          await AuthService.logout().then((value) {
-            Navigator.pop(context);
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: ((context) => const LoginPage())));
-          });
-        },
+        onConfirmBtnPress: () =>
+            context.read<AuthenticateCubit>().onLogoutAction(context),
       ),
     );
   }
